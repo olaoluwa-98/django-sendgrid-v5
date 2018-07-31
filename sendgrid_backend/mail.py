@@ -15,7 +15,7 @@ from django.core.mail.backends.base import BaseEmailBackend
 import sendgrid
 from sendgrid.helpers.mail import (
     ASM, Attachment, Category, Content, Email, Header, Mail, MailSettings, OpenTracking,
-    Personalization, SandBoxMode, Substitution, TrackingSettings
+    Personalization, SandBoxMode, Substitution, TrackingSettings, DynamicTemplateData
 )
 
 from python_http_client.exceptions import HTTPError
@@ -110,6 +110,10 @@ class SendgridBackend(BaseEmailBackend):
             if hasattr(msg, "substitutions"):
                 for k, v in msg.substitutions.items():
                     personalization.add_substitution(Substitution(k, v))
+                    
+            if hasattr(msg, "dynamic_template_data"):
+                for k, v in msg.dynamic_template_data.items():
+                    personalization.add_dynamic_template_data(DynamicTemplateData(k, v))
 
         # write through the ip_pool_name attribute
         if hasattr(msg, "ip_pool_name"):
